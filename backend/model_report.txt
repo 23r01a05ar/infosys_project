@@ -1,0 +1,29 @@
+MODEL REPORT
+
+Model Used:
+MobileNetV2 (Pretrained CNN Model)
+
+Framework:
+TensorFlow / Keras
+
+Dataset:
+Custom product dataset containing 20 product images
+
+Accuracy Results:
+Total Images Tested: 20
+Successful Predictions: 10
+Model Accuracy: 50%
+
+Observations:
+• Model performs well on general objects
+• Accuracy reduces for ecommerce specific products
+• Confidence scores vary depending on similarity with ImageNet classes
+
+Limitations:
+• Model is not fine-tuned for product dataset
+• Some misclassifications observed
+
+Future Improvements:
+• Train model on ecommerce product dataset
+• Increase testing dataset size
+• Add product-specific keyword mapping

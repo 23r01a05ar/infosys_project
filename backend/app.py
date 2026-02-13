@@ -2,7 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import uuid
+
 from preprocessing import preprocess_image
+from model import predict_product
 
 app = Flask(__name__)
 CORS(app)
@@ -46,12 +48,16 @@ def upload_image():
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
-    # ⭐ Preprocessing pipeline
-    preprocess_image(filepath)
+    # 🔹 Preprocess image
+    processed_img = preprocess_image(filepath)
+
+    # 🔹 Run model prediction
+    predictions = predict_product(processed_img)
 
     return jsonify({
         "message": "Image uploaded successfully",
-        "image_id": unique_id
+        "image_id": unique_id,
+        "predictions": predictions
     }), 200
 
 

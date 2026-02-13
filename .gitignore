@@ -3,3 +3,4 @@ node_modules/
 __pycache__/
 .env
 backend/uploads/
+product_test_images/
