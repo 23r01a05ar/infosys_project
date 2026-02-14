@@ -5,6 +5,8 @@ function App() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -20,12 +22,14 @@ function App() {
     setImage(file);
     setPreview(URL.createObjectURL(file));
     setMessage("");
+    setPrediction(null);
   };
 
   const handleRemoveImage = () => {
     setImage(null);
     setPreview(null);
     setMessage("");
+    setPrediction(null);
   };
 
   const handleUpload = async () => {
@@ -38,6 +42,10 @@ function App() {
     formData.append("image", image);
 
     try {
+      setLoading(true);
+      setMessage("");
+      setPrediction(null);
+
       const response = await fetch(
         "http://127.0.0.1:5000/api/upload-image",
         {
@@ -50,11 +58,14 @@ function App() {
 
       if (response.ok) {
         setMessage(`Upload Successful! Image ID: ${data.image_id}`);
+        setPrediction(data.prediction); // ✅ FIXED
       } else {
         setMessage(data.error);
       }
     } catch {
-      setMessage("Server error");
+      setMessage("Server error or backend not running");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,11 +122,24 @@ function App() {
 
         <br />
 
-        <button className="btn btn-primary mt-3" onClick={handleUpload}>
-          Upload Image
+        <button
+          className="btn btn-primary mt-3"
+          onClick={handleUpload}
+          disabled={loading}
+        >
+          {loading ? "Uploading..." : "Upload Image"}
         </button>
 
         {message && <p className="mt-3 fw-bold">{message}</p>}
+
+        {/* Prediction Result */}
+        {prediction && (
+          <div className="alert alert-success mt-3">
+            <h5>Identified Product</h5>
+            <p><b>Label:</b> {prediction.label}</p>
+            <p><b>Confidence:</b> {(prediction.confidence * 100).toFixed(2)}%</p>
+          </div>
+        )}
       </div>
 
       {/* Footer */}

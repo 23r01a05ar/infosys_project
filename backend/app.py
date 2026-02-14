@@ -48,16 +48,22 @@ def upload_image():
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
-    # 🔹 Preprocess image
+    # Preprocess image
     processed_img = preprocess_image(filepath)
 
-    # 🔹 Run model prediction
+    # Run model prediction
     predictions = predict_product(processed_img)
+
+    # Extract top prediction
+    top_prediction = predictions[0]
 
     return jsonify({
         "message": "Image uploaded successfully",
         "image_id": unique_id,
-        "predictions": predictions
+        "prediction": {
+            "label": top_prediction["product"],
+            "confidence": float(top_prediction["confidence"])
+        }
     }), 200
 
 
